@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agile Quiz</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600&display=swap');
 
         * {
             box-sizing: border-box;
@@ -32,6 +32,20 @@
             overflow: hidden;
         }
 
+        /* Styles for the progress bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4caf50; /* Green color for progress */
+            width: 0%; /* Initial width */
+            transition: width 0.4s ease-in-out;
+        }
+        
         .quiz-header {
             padding: 2rem;
         }
@@ -40,6 +54,7 @@
             padding: 1rem;
             text-align: center;
             margin: 0;
+            font-weight: 600;
         }
 
         ul {
@@ -49,7 +64,7 @@
 
         ul li {
             font-size: 1.1rem;
-            margin: 1rem 0;
+            margin: 1.2rem 0;
         }
 
         ul li label {
@@ -78,10 +93,24 @@
             outline: none;
             background-color: #004a99;
         }
+
+        .final-results h2, .final-results h3 {
+             text-align: center;
+        }
+
+        .final-results p {
+            text-align: center; 
+            font-size: 1.2rem;
+        }
+
     </style>
 </head>
 <body>
     <div class="quiz-container" id="quiz">
+        <!-- Progress Bar HTML -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
         <div class="quiz-header">
             <h2 id="question">Question text</h2>
             <ul>
@@ -185,6 +214,7 @@
     const c_text = document.getElementById('c_text');
     const d_text = document.getElementById('d_text');
     const submitBtn = document.getElementById('submit');
+    const progressBar = document.getElementById('progress-bar');
 
     // Shuffle the entire catalog and pick the first 45 questions
     const shuffledQuizData = quizData.sort(() => Math.random() - 0.5).slice(0, 45);
@@ -197,8 +227,11 @@
     function loadQuiz() {
         deselectAnswers();
 
-        const currentQuizData = shuffledQuizData[currentQuiz];
+        // Update Progress Bar
+        const progressPercent = (currentQuiz / shuffledQuizData.length) * 100;
+        progressBar.style.width = `${progressPercent}%`;
 
+        const currentQuizData = shuffledQuizData[currentQuiz];
         questionEl.innerText = `(${currentQuiz + 1}/${shuffledQuizData.length}) ${currentQuizData.question}`;
         a_text.innerText = currentQuizData.a;
         b_text.innerText = currentQuizData.b;
@@ -233,6 +266,9 @@
             if (currentQuiz < shuffledQuizData.length) {
                 loadQuiz();
             } else {
+                // Final update for the progress bar to show 100%
+                progressBar.style.width = '100%';
+
                 const finalScore = score;
                 const totalQuestions = shuffledQuizData.length;
                 const percentage = Math.round((finalScore / totalQuestions) * 100);
@@ -242,16 +278,21 @@
                 let passStatus = (percentage >= passingPercentage)
                     ? '<h3>Glückwunsch, Sie haben bestanden!</h3>'
                     : '<h3>Leider nicht bestanden. Versuchen Sie es erneut!</h3>';
-
+                
+                // Hide the question header and list, show final results
                 quiz.innerHTML = `
-                    <h2>Quiz beendet!</h2>
-                    <p style="text-align: center; font-size: 1.2rem;">${resultMessage}</p>
-                    ${passStatus}
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 100%; background-color: #4caf50;"></div>
+                    </div>
+                    <div class="final-results">
+                        <h2>Quiz beendet!</h2>
+                        <p>${resultMessage}</p>
+                        ${passStatus}
+                    </div>
                     <button onclick="location.reload()">Neues Quiz starten</button>
                 `;
             }
         } else {
-            // Optional: Alert user to select an answer
             alert("Bitte wählen Sie eine Antwort aus.");
         }
     });
