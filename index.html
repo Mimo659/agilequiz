@@ -21,9 +21,10 @@
             overflow-y: auto;
             margin: 0;
             padding: 2rem 0;
+            text-align: center; /* Center content for the home page */
         }
 
-        .quiz-container {
+        .container { /* General container for both home and quiz */
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px 2px rgba(100, 100, 100, 0.1);
@@ -31,6 +32,21 @@
             max-width: 95%;
             overflow: hidden;
         }
+
+        .home-container h1 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .home-container p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-container {
+            /* Styles moved to .container or specific to quiz display */
+        }
+
 
         /* Styles for the progress bar */
         .progress-container {
@@ -106,33 +122,41 @@
     </style>
 </head>
 <body>
-    <div class="quiz-container" id="quiz">
-        <!-- Progress Bar HTML -->
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+    <div class="container" id="container">
+        <div class="home-container" id="home">
+            <h1>Willkommen zum agile Quiz!</h1>
+            <p>Hier kannst du dein agiles Wissen testen. Viel Spaß!</p>
+            <button id="start-quiz-btn">Quiz starten</button>
         </div>
-        <div class="quiz-header">
-            <h2 id="question">Question text</h2>
-            <ul>
-                <li>
-                    <input type="radio" name="answer" id="a" class="answer">
-                    <label for="a" id="a_text">Answer</label>
-                </li>
-                <li>
-                    <input type="radio" name="answer" id="b" class="answer">
-                    <label for="b" id="b_text">Answer</label>
-                </li>
-                <li>
-                    <input type="radio" name="answer" id="c" class="answer">
-                    <label for="c" id="c_text">Answer</label>
-                </li>
-                <li>
-                    <input type="radio" name="answer" id="d" class="answer">
-                    <label for="d" id="d_text">Answer</label>
-                </li>
-            </ul>
+
+        <div class="quiz-container" id="quiz" style="display: none;">
+            <!-- Progress Bar HTML -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="quiz-header">
+                <h2 id="question">Question text</h2>
+                <ul>
+                    <li>
+                        <input type="radio" name="answer" id="a" class="answer">
+                        <label for="a" id="a_text">Answer</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="answer" id="b" class="answer">
+                        <label for="b" id="b_text">Answer</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="answer" id="c" class="answer">
+                        <label for="c" id="c_text">Answer</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="answer" id="d" class="answer">
+                        <label for="d" id="d_text">Answer</label>
+                    </li>
+                </ul>
+            </div>
+            <button id="submit">Weiter</button>
         </div>
-        <button id="submit">Weiter</button>
     </div>
 <script>
     const quizData = [
@@ -206,7 +230,6 @@
     ];
 
 
-    const quiz = document.getElementById('quiz');
     const answerEls = document.querySelectorAll('.answer');
     const questionEl = document.getElementById('question');
     const a_text = document.getElementById('a_text');
@@ -215,6 +238,10 @@
     const d_text = document.getElementById('d_text');
     const submitBtn = document.getElementById('submit');
     const progressBar = document.getElementById('progress-bar');
+    const homeContainer = document.getElementById('home');
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    const quizContainer = document.getElementById('quiz');
+    const overallContainer = document.getElementById('container'); // Renamed to avoid conflict
 
     // Shuffle the entire catalog and pick the first 45 questions
     const shuffledQuizData = quizData.sort(() => Math.random() - 0.5).slice(0, 45);
@@ -222,7 +249,13 @@
     let currentQuiz = 0;
     let score = 0;
 
-    loadQuiz();
+    // loadQuiz(); // Don't load quiz immediately, wait for button click
+
+    startQuizBtn.addEventListener('click', () => {
+        homeContainer.style.display = 'none';
+        quizContainer.style.display = 'block';
+        loadQuiz();
+    });
 
     function loadQuiz() {
         deselectAnswers();
@@ -280,11 +313,12 @@
                     : '<h3>Leider nicht bestanden. Versuchen Sie es erneut!</h3>';
                 
                 // Hide the question header and list, show final results
-                quiz.innerHTML = `
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: 100%; background-color: #4caf50;"></div>
+                // Use overallContainer to replace its content, not quizContainer
+                overallContainer.innerHTML = `
+                    <div class="progress-container" style="border-radius: 10px 10px 0 0;">
+                        <div class="progress-bar" style="width: 100%; background-color: #4caf50; border-radius: 10px 0 0 0;"></div>
                     </div>
-                    <div class="final-results">
+                    <div class="final-results" style="padding: 2rem;">
                         <h2>Quiz beendet!</h2>
                         <p>${resultMessage}</p>
                         ${passStatus}
