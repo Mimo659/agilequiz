@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agile Quiz</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-y: auto;
+            margin: 0;
+            padding: 2rem 0;
+        }
+
+        .quiz-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px 2px rgba(100, 100, 100, 0.1);
+            width: 600px;
+            max-width: 95%;
+            overflow: hidden;
+        }
+
+        .quiz-header {
+            padding: 2rem;
+        }
+
+        h2 {
+            padding: 1rem;
+            text-align: center;
+            margin: 0;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+
+        ul li label {
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: inherit;
+            padding: 1.3rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:focus {
+            outline: none;
+            background-color: #004a99;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container" id="quiz">
+        <div class="quiz-header">
+            <h2 id="question">Question text</h2>
+            <ul>
+                <li>
+                    <input type="radio" name="answer" id="a" class="answer">
+                    <label for="a" id="a_text">Answer</label>
+                </li>
+                <li>
+                    <input type="radio" name="answer" id="b" class="answer">
+                    <label for="b" id="b_text">Answer</label>
+                </li>
+                <li>
+                    <input type="radio" name="answer" id="c" class="answer">
+                    <label for="c" id="c_text">Answer</label>
+                </li>
+                <li>
+                    <input type="radio" name="answer" id="d" class="answer">
+                    <label for="d" id="d_text">Answer</label>
+                </li>
+            </ul>
+        </div>
+        <button id="submit">Weiter</button>
+    </div>
+<script>
+    const quizData = [
+        { question: "Was sind die 'Liberating Structures'?", a: "Ein Leitfaden für Workshops", b: "Methode zur Gruppenfindung", c: "Moderationsmethoden, um viele Teilnehmende gleichzeitig einzubinden", d: "Eine Prozess-Guideline für Moderatoren", correct: "c" },
+        { question: "Was gefährdet die 'Psychologische Sicherheit' der Führungskräfte?", a: "Laufende Information über Veränderungen", b: "Sie kennen ihre zukünftige Rolle", c: "Sie kennen ihre zukünftige Rolle nicht", d: "Sie haben das Gefühl, Fehler machen zu können", correct: "c" },
+        { question: "Was können Elemente für einen Kickoff-Workshop für ein Transformationsteam sein?", a: "Kommunikationsstrategie", b: "Kadenz und Events vereinbaren", c: "Identifizierung der Stakeholder", d: "Alle Antworten sind richtig", correct: "d" },
+        { question: "Was ist kein agiler Wert im Sinne des Agilen Manifest?", a: "Zusammenarbeit mit Kunden vor Vertragsverhandlungen", b: "Effektivität und Zielorientierung vor Effizienz", c: "Individuen und Interaktionen vor Prozessen", d: "Eingehen auf Änderungen vor Planverfolgung", correct: "b" },
+        { question: "Welchen Einfluss haben die Ziele des Managements für die Agile Transformation?", a: "Konkurrierende Ziele erschweren den Fokus", b: "Alle Antworten sind falsch", c: "Ziele müssen 1:1 mit der Vision übereinstimmen", d: "Ziele sind unabhängig von der Transformation", correct: "a" },
+        { question: "Welche Aussage hat das Cynefin-Framework?", a: "Empfiehlt ein gesteuertes Vorgehen für jeden Zustand", b: "Stellt den PDCA-Zyklus auf den Kopf", c: "Empfiehlt ausführliche Analyse für komplexe Systeme", d: "Empfiehlt Handlungsmuster in Abhängigkeit des Systemzustands", correct: "d" },
+        { question: "Was braucht es nicht zwingend zur Durchführung von 'Lean-Coffee'?", a: "Aktive Teilnehmer", b: "Räume mit Stühlen und Flipchart", c: "Einen Time-Keeper", d: "Eine Auswahl von Themen", correct: "b" },
+        { question: "Welche der folgenden Fragen ist eine zirkuläre Frage?", a: "Wie siehst Du das?", b: "Welche weiteren Möglichkeiten siehst Du?", c: "Wie kam es dazu?", d: "Wie würde jemand aus Deinem Umfeld das sehen?", correct: "d" },
+        { question: "Welchen Nachteil kann ein Teamrollen-Profil haben?", a: "Das Team versteift sich auf einzelne Rollen statt auf das Zusammenwirken", b: "Das Team erkennt die Bedeutung der Rollen", c: "Teammitglieder verstehen die Auswirkungen der Rollen", d: "Teammitglieder lernen Umgang mit Unterschiedlichkeit", correct: "a" },
+        { question: "Was ist eine Fuck-Up-Night?", a: "Event zur Präsentation von Erfolgen", b: "Event zum Teilen von Misserfolgen und zum Lernen", c: "Outdoor-Veranstaltung", d: "Soziales Treffen unter Freunden", correct: "b" },
+        { question: "Welcher Zweck (Purpose) spricht nicht für eine agile Transformation?", a: "Ohne Agilität geht heute nichts mehr", b: "Sicherung des Bestehens in der VUCA Welt", c: "Agiles Arbeiten in dynamischem Umfeld", d: "Mehr Kundenzentrierung", correct: "a" },
+        { question: "Was ist Voraussetzung für die Methode 'BarCamp'?", a: "Visualisierung der Sessions", b: "Alle Antworten sind korrekt", c: "Ein Gastgeber pro Session", d: "Separate Räume", correct: "b" },
+        { question: "Wann sind Lehrziele besonders hilfreich?", a: "Wenn sie mit den Interessen des Lernenden korrelieren", b: "Wenn keine Wahlmöglichkeiten gegeben werden", c: "Wenn man annimmt, Ziele einfach erreichen zu können", d: "Wenn sie im Widerspruch zu anderen Zielen stehen", correct: "a" },
+        { question: "Welchen Einfluss spielen Zeit und Raum in der Agilen Transformation?", a: "Alle Antworten sind richtig", b: "Mangelnde Zeit ist ein Hindernis für Lernschritte", c: "Tagesgeschäft bremst andere Vorhaben", d: "Ohne Raum für Experimente ist es schwer, Neues auszuprobieren", correct: "a" },
+        { question: "Warum ist Kommunikation für den Agile Coach so wichtig?", a: "Missverständnisse entstehen oft durch mangelnde Kommunikation", b: "Direkte Kommunikation beeinflusst die Beziehungsebene positiv", c: "Wichtige Informationen können ausgetauscht werden", d: "Alle Antworten sind richtig", correct: "d" },
+        { question: "Wozu kann die Liberating Structure 'TRIZ' beitragen?", a: "Termine inkrementell zentrieren", b: "Stille Leute zum Sprechen zu bringen", c: "Fragt 'Was müssen wir aufhören zu tun, um unser Ziel zu erreichen?'", d: "Emotionale Gruppen deeskalieren", correct: "c" },
+        { question: "Was widerspricht der psychologischen Sicherheit?", a: "Man redet übereinander statt miteinander", b: "Mitarbeiter werden nicht für abweichende Meinungen verurteilt", c: "Individuen und Interaktionen zählen mehr als Prozesse", d: "Freunde findet man, wo man Schwäche zeigen kann", correct: "a" },
+        { question: "In der Transformationsphase Progressive: Was gehört nicht dazu?", a: "Agilen Pilot starten", b: "Agilität erweitern & Erfolge feiern", c: "Rückschläge aushalten", d: "Fake Agile vermeiden", correct: "a" },
+        { question: "Welches Mindset braucht ein Agile Coach?", a: "Trägt Verantwortung für Prozess und Ergebnis", b: "Auftrag ergibt sich automatisch aus der Rolle", c: "Transparenz ist wichtiger als Vertraulichkeit", d: "Verantwortung für Veränderungen liegt bei Organisation/Teams/Coachee", correct: "d" },
+        { question: "Warum ersetzt SAFe die Linienorganisation?", a: "SAFe ersetzt sie durch eine flache Hierarchie", b: "SAFe ersetzt sie nicht, sondern ergänzt sie (duales Betriebssystem)", c: "SAFe ersetzt sie durch ein Netzwerk autonomer Einheiten", d: "SAFe ersetzt sie durch eine vollständig agile Struktur", correct: "b" },
+        { question: "Woran kann die Verankerung des agilen Arbeitens scheitern?", a: "Mitarbeiter erhalten Gelegenheit, neue Arbeitsweisen einzusetzen", b: "Es wird über Erfahrungen reflektiert", c: "Es fehlt an 'Role Models'", d: "Mitarbeiter werden nicht angeleitet", correct: "c" },
+        { question: "Welche Regeln gelten bei der Methode 'Open Space' nicht?", a: "Das Gesetz der zwei Füße", b: "Es gibt eine organisierte Dokumentation", c: "Wer auch immer kommt, es sind die richtigen Leute", d: "Selbstverantwortung der Teilnehmenden für die Doku", correct: "b" },
+        { question: "Was sind Fehler im 1:1-Coaching?", a: "Den Rapport verlieren", b: "Das Ziel des Coachees für falsch erklären", c: "Alle Aussagen sind korrekt", d: "Ungefragt aus der eigenen Weltsicht erzählen", correct: "c" },
+        { question: "Was ist eine typische Grenze des agilen Coachings?", a: "Agiles Coaching kennt keine Grenzen", b: "Agile Coaches sollten keinen Product Owner unterstützen", c: "Agile Coaches dürfen nur auf Teamebene coachen", d: "Wenn das Management nicht dahintersteht, sind die Möglichkeiten begrenzt", correct: "d" },
+        { question: "In welchem Kontext wirkt der Agile Coach in der Rolle des Beraters?", a: "Bei der Auswahl passender agiler Frameworks", b: "Bei der Auswahl der IT-Infrastruktur", c: "Bei der Rekrutierung von Mitarbeitern", d: "Bei der Bestimmung der Organisationsstruktur", correct: "a" },
+        { question: "Welche Aussage zu den genannten Rollen trifft nicht zu?", a: "Als Trainer habe ich einen Lehrplan", b: "Als Therapeut behandle ich psychische Erkrankungen", c: "Als Berater gebe ich Empfehlungen", d: "Als Führungskraft verfolge ich keine eigenen Interessen", correct: "d" },
+        { question: "Was gehört nicht zu Reflexion (Retrospektive)?", a: "Sammeln von Hindernissen", b: "Reflektieren der Zusammenarbeit", c: "Festlegen von Maßnahmen", d: "Priorisieren von Arbeitsaufgaben", correct: "d" },
+        { question: "Was ist kein Kennzeichen des klassischen Projektmanagements?", a: "Projekte werden im Sinne eines Best Practices Ansatz durchgeführt", b: "Projekte werden über den gesamten Verlauf vorgeplant", c: "Der Projektfortschritt wird ständig mit dem Kunden reflektiert", d: "Der Projektleiter ist der zentrale Ansprechpartner", correct: "a" },
+        { question: "Wer oder was steht beim Agilen Lernen im Mittelpunkt?", a: "Der Trainer", b: "Der Lernende mit seinem Lernzielen", c: "Das Unternehmen mit seinen Anforderungen", d: "Die Effizienz beim Lernen", correct: "b" },
+        { question: "Welche Aussage zum (systemischen) Coaching ist richtig?", a: "Der Coach erklärt dem Coachee, was zu tun ist", b: "Es ist die Aufgabe des Coachees, seinen Weg selbst zu suchen", c: "Der Coach trifft Annahmen oder Hypothesen", d: "Im Coaching wird der Rahmen geschaffen, in dem der Coachee selbst zum ZIEL findet", correct: "d" },
+        { question: "Wodurch unterscheiden sich die Rollen 'Scrum Master' und 'Agile Coach'?", a: "Der Agile Coach kennt über Scrum hinaus mehrere Frameworks und berät strategischer", b: "Der Agile Coach arbeitet nicht mit Scrum", c: "Sie erfüllen die selben Aufgaben", d: "Der Scrum Master arbeitet nur mit seinen Teams", correct: "a" },
+        { question: "Was ist kein Kriterium, das beim Zusammenstellen eines agilen Transformationsteams eine Rolle spielen sollte?", a: "Teamgröße idealerweise 3 bis 9 Personen", b: "Mitglieder aus verschiedenen Unternehmensbereichen", c: "Nur Leute mit Erfahrung in Agilität sollten Teil des Teams werden", d: "Das Team bildet die Anfangsphase des Prozesses", correct: "c" },
+        { question: "Inwiefern ist die Stacy-Matrix kritisch zu betrachten?", a: "Die Abgrenzung der vier Felder ist zu statisch", b: "Sie legt einen zu starken Fokus auf das Projektumfeld", c: "Die Matrix stellt eine starke Vereinfachung dar und sollte kombiniert werden", d: "Sie wird heute über ihren Zweck hinaus verwendet", correct: "c" },
+        { question: "Was zeichnet die 'Kopfstandmethode' aus?", a: "Teilnehmende übernehmen eine 'verdrehte' Sicht", b: "Lösung wird mittels umgedrehter Perspektive überprüft", c: "Aussagen werden ins Gegenteil verkehrt", d: "Eine Situation wird in die Extreme geführt, um aus Umkehrschlüssen Lösungen zu generieren", correct: "d" },
+        { question: "Welche Aussage trifft auf das Thema Auftragsklärung zu?", a: "Auftragsklärung erfolgt nur einmal zu Beginn", b: "Man sollte nicht zu oft mit dem Kunden darüber reden", c: "Sie muss vor Beauftragung vollumfänglich erledigt sein", d: "Auftragsklärung ist ein fortlaufender Prozess", correct: "d" },
+        { question: "Welche Aussage zur Veränderung von Organisationskultur ist korrekt?", a: "Organisationskultur ist nur sehr langfristig veränderbar", b: "Die Vision wird jedes Jahr an die Kultur angepasst", c: "Sie lässt sich direkt durch Interventionen verändern", d: "Sie verändert sich durch das Handeln der in ihr tätigen Personen", correct: "d" },
+        { question: "Wobei sind Coaching-Kompetenzen von Bedeutung?", a: "Alle anderen Antworten sind falsch", b: "Um im Gespräch mit Einzelpersonen und Teams Lösungen für deren Anliegen zu erarbeiten", c: "Weil es Bestandteil seines Titels ist", d: "Um sich gegenüber Bedenkenträgern durchzusetzen", correct: "b" },
+        { question: "Was widerspricht dem Framework 'Kanban'?", a: "Ideale Verteilung von Kapazitäten", b: "Optimierung von Durchlaufzeiten", c: "Arbeiten mit WIP-Limits", d: "Die Arbeit an möglichst vielen Themen gleichzeitig", correct: "d" },
+        { question: "Wofür steht PDCA?", a: "Power, Do, Control, Act", b: "Plan, Do, Check, Act", c: "Power, Do, Check, Agile", d: "Power, Do, Check, Act", correct: "b" },
+        { question: "Wie unterstützt der Facilitation-Prozess Entscheidungen?", a: "Indem in jedem Fall Konsens erreicht werden sollte", b: "Gar nicht", c: "Durch alle Phasen des Design-Thinking-Prozesses", d: "Durch Divergent und Convergent Thinking", correct: "d" },
+        { question: "Welche Funktion hat die Ausnahmefrage?", a: "Den Coachee bestätigen, dass die Situation auswegslos ist", b: "Eine Situation finden, in der das Problem nicht auftrat, um günstige Umstände abzuleiten", c: "Nicht zielführende Lösungsansätze identifizieren", d: "Dem Coachee aufzeigen, dass er die Sache falsch sieht", correct: "b" },
+        { question: "In welcher Reihenfolge werden die Fragen im 'Golden Circle' gestellt?", a: "Alle Antworten sind falsch", b: "Why? How? What?", c: "When? Who? What?", d: "How, What, Why", correct: "b" },
+        { question: "Wo sollten Entscheidungen in einer agilen Organisation gefällt werden?", a: "Alle Antworten sind falsch", b: "Gemeinschaftlich durch alle Stakeholder", c: "Ausschließlich in agilen Teams", d: "Im agilen Führungskreis", correct: "b" },
+        { question: "Was bedeutet Pacing im Zusammenhang mit Coaching?", a: "Aktives Zuhören und spiegeln von Signalen, um Rapport aufzubauen", b: "Kommt aus dem NLP und hat mit Coaching nichts zu tun", c: "Den Coachee ausbremsen bei zu hohem Arbeitstempo", d: "Dem Coachee den Weg zum Ziel zu zeigen", correct: "a" },
+        { question: "Welches Kriterium widerspricht einem guten Lernziel?", a: "Sollte eng mit einer konkreten Anwendung verbunden sein", b: "Sollte für den Lernenden motivierend sein", c: "Sollte selbständig oder mit Unterstützung erreichbar sein", d: "Lernziele sollten schwächenorientiert sein", correct: "d" },
+        { question: "Wodurch wird der Wandel gebremst?", a: "Der Leidensdruck des Status Quo ist zu groß", b: "Systeme streben Stabilität an und bremsen dadurch den Wandel", c: "Dinge frühzeitig anzugehen birgt Risiken", d: "Komfortzonen existieren nur für Menschen", correct: "b" },
+        { question: "Was ist kein Aspekt von VUCA?", a: "Chaos durch Auswirkungen von Veränderungen", b: "Unsicherheit bezüglich der Folgen", c: "Volatilität bezüglich des Ausmaßes", d: "Ambiguität in der Deutung", correct: "a" },
+        { question: "Von welcher Flughöhe aus sollte beim Flight-Levels-Modell Agilität eingeführt werden?", a: "Level 2", b: "Level 3", c: "2000 Meter", d: "Level 1", correct: "d" },
+        { question: "Womit befasst sich die Teamentwicklung?", a: "Teams durch die Phasen der Teamentwicklung führen", b: "Teams für die Bedeutung unterschiedlicher Rollen sensibilisieren", c: "Alle Antworten sind richtig", d: "Teams bei der Erarbeitung ihrer Vision und Ziele unterstützen", correct: "c" },
+        { question: "Welche Erkenntnis kann der Coachee aus dem Konstruktivismus ziehen?", a: "Es gibt nur eine Wahrheit", b: "Die Realität ist unveränderlich", c: "Die falsche Wahrnehmung versperrt den Blick auf die Wirklichkeit", d: "Ich kann durch meine Einstellung meine Wahrnehmung der Situation ändern", correct: "d" },
+        { question: "Wofür ist das 'Commitment' der Beteiligten wichtig?", a: "Das Ziel der Transformation bleibt bei Widerständen im Fokus", b: "Management und Führungskräfte verkörpern als 'Role Model' ihr 'Commitment'", c: "Alle Antworten sind korrekt", d: "Die Transformation bleibt auch im Alltagsgeschäft im Fokus", correct: "c" },
+        { question: "Welche Perspektiven bildet die 'Stakeholder-Matrix' ab?", a: "Interesse & Betroffenheit", b: "Einfluss & Interesse", c: "Betroffenheit & Einfluss", d: "Alle Antworten sind korrekt", correct: "b" },
+        { question: "Was ist ein Release-Train-Engineer (RTE)?", a: "Ein Leiter eines Agile Release Trains (ART) im SAFe-Framework", b: "Ein IT-Administrator für Software-Release-Trains", c: "Ein Softwareentwickler für Deployment-Pipelines", d: "Ein Qualitätsprüfer für Software-Releases", correct: "a" },
+        { question: "Für welche Art von Projekten eignet sich 'Scrum' am ehesten?", a: "Projekte, bei denen neue Produkte oder Dienstleistungen entwickelt werden", b: "Projekte, bei denen Zielsetzung von Beginn an klar sind", c: "Projekte zur kontinuierlichen Verbesserung", d: "Projekte, die sich mit Betrieb und Wartung befassen", correct: "a" },
+        { question: "Was bedeutet der Satz „Trust the process“?", a: "Darauf vertrauen, dass der Coaching-Prozess positive Veränderungen bringt", b: "Darauf vertrauen, dass der Prozess Geld in die Kasse spült", c: "Darauf vertrauen, als Coach die beste Lösung zu kennen", d: "Darauf vertrauen, dass sich die Lösung schnell findet", correct: "a" },
+        { question: "Welche Bedeutung hat das agile Mindset?", a: "Agilität wirkt über die Geisteshaltung", b: "Die Geisteshaltung bestimmt den Erfolg", c: "Wer nicht agil denkt, kann nicht agil arbeiten", d: "Wenn man mit agilen Frameworks arbeitet, ist das Mindset automatisch gegeben", correct: "c" },
+        { question: "Woher stammt der Begriff der Agilität?", a: "Er wurde von den Begründern des Agilen Manifest geprägt", b: "Er entstammt dem AGIL-Schema zur Selbsterhaltung", c: "Er stammt aus der Bewegung der Digitalen Transformation", d: "Er wurde im Rahmen des Qualitätsmanagements geprägt", correct: "a" },
+        { question: "Warum ist der Konstruktivismus im Coaching von Bedeutung?", a: "Er erhöht die Perspektivenvielfalt und Handlungsoptionen", b: "Alle Antworten sind richtig", c: "Er hilft, die eigene Einstellung zu ändern, wenn die Dinge sich nicht ändern", d: "Im Coaching wird nur das Denken und Handeln des Coachee verändert", correct: "b" },
+        { question: "Ab welcher Eskalationsstufe nach F. Glasl benötigen Konfliktparteien Hilfe von außen?", a: "4", b: "12", c: "1", d: "7", correct: "a" },
+        { question: "Was ist wichtig für das Zusammenspiel zwischen Coach und Coachee?", a: "Die Fachkompetenz des Coach ist unbestritten", b: "Lösungen dienen vor allem dem Moment", c: "Die Zusammenarbeit basiert auf Freiwilligkeit", d: "Die Vermittlung von Wissen steht an erster Stelle", correct: "c" },
+        { question: "Was ist kein Kernpunkt Agilen Lernens?", a: "Lernen, Übung und Praxis sind eng verbunden", b: "Lernen ist individualisiert und praxisnah", c: "Lernziele, -formate und -settings werden vorgegeben", d: "Kollaboratives Lernen ist wichtig", correct: "c" },
+        { question: "Was ist der Unterschied zwischen einem Agile Master und einem Agile Coach?", a: "Der Agile Master hat eine höhere hierarchische Position", b: "Beide haben identische Rollen", c: "Der Agile Master arbeitet nur mit Softwareteams, der Coach nur mit Management", d: "Der Agile Master kümmert sich um die operative Umsetzung, der Coach um die übergreifenden Prozesse", correct: "d" },
+        { question: "Welche der genannten Optionen ist kein Framework zur Skalierung von agilem Arbeiten?", a: "LeSS", b: "SAFe", c: "Spotify-Modell", d: "OKR", correct: "d" },
+        { question: "Was ist das Business Agility Assessment?", a: "Ein Modell zur Messung des agilen Reifegrads aus dem SAFe Framework", b: "Ein agiles Assessment-Center", c: "Das Business Agility Assessment existiert nicht", d: "Ein Transformationsmodell von Edgar Schein", correct: "a" },
+        { question: "Was ist kein Aspekt von VUCA (deutsch)?", a: "Chaos durch Auswirkungen von Veränderungen", b: "Unsicherheit in Bezug auf die Folgen von Veränderungen", c: "Volatilität in Bezug auf das Ausmaß von Veränderungen", d: "Ambiguität in der Deutung von Veränderungen", correct: "a" },
+        { question: "Was bedeutet Selbstorganisation im Kontext von Agilität?", a: "Teams arbeiten unabhängig voneinander nur an ihren Aufgaben", b: "Mitarbeiter entscheiden eigenständig, wann und von wo sie arbeiten", c: "Führungskräfte steuern ihre Teams über 'command & control'", d: "Teams versuchen Aufgaben zunächst intern zu lösen und holen sich bei Bedarf Unterstützung von außen", correct: "d" },
+        { question: "Wie wirkt die Methode '1-2-4-all'?", a: "Eine Person teilt ihre Einsicht schrittweise mit immer mehr Personen", b: "Zuerst wird allein gearbeitet, dann in immer größeren Kreisen geteilt und angepasst", c: "Moderatoren geben ein Statement vor, das in Gruppen bearbeitet wird", d: "Eine Person gibt 4 anderen Teilnehmern 2 Meinungen mit", correct: "b" }
+    ];
+
+
+    const quiz = document.getElementById('quiz');
+    const answerEls = document.querySelectorAll('.answer');
+    const questionEl = document.getElementById('question');
+    const a_text = document.getElementById('a_text');
+    const b_text = document.getElementById('b_text');
+    const c_text = document.getElementById('c_text');
+    const d_text = document.getElementById('d_text');
+    const submitBtn = document.getElementById('submit');
+
+    // Shuffle the entire catalog and pick the first 45 questions
+    const shuffledQuizData = quizData.sort(() => Math.random() - 0.5).slice(0, 45);
+
+    let currentQuiz = 0;
+    let score = 0;
+
+    loadQuiz();
+
+    function loadQuiz() {
+        deselectAnswers();
+
+        const currentQuizData = shuffledQuizData[currentQuiz];
+
+        questionEl.innerText = `(${currentQuiz + 1}/${shuffledQuizData.length}) ${currentQuizData.question}`;
+        a_text.innerText = currentQuizData.a;
+        b_text.innerText = currentQuizData.b;
+        c_text.innerText = currentQuizData.c;
+        d_text.innerText = currentQuizData.d;
+    }
+
+    function deselectAnswers() {
+        answerEls.forEach(answerEl => answerEl.checked = false);
+    }
+
+    function getSelected() {
+        let answer;
+        answerEls.forEach(answerEl => {
+            if (answerEl.checked) {
+                answer = answerEl.id;
+            }
+        });
+        return answer;
+    }
+
+    submitBtn.addEventListener('click', () => {
+        const answer = getSelected();
+
+        if (answer) {
+            if (answer === shuffledQuizData[currentQuiz].correct) {
+                score++;
+            }
+
+            currentQuiz++;
+
+            if (currentQuiz < shuffledQuizData.length) {
+                loadQuiz();
+            } else {
+                const finalScore = score;
+                const totalQuestions = shuffledQuizData.length;
+                const percentage = Math.round((finalScore / totalQuestions) * 100);
+                const passingPercentage = 80;
+
+                let resultMessage = `Sie haben ${finalScore} von ${totalQuestions} Fragen richtig beantwortet (${percentage}%).`;
+                let passStatus = (percentage >= passingPercentage)
+                    ? '<h3>Glückwunsch, Sie haben bestanden!</h3>'
+                    : '<h3>Leider nicht bestanden. Versuchen Sie es erneut!</h3>';
+
+                quiz.innerHTML = `
+                    <h2>Quiz beendet!</h2>
+                    <p style="text-align: center; font-size: 1.2rem;">${resultMessage}</p>
+                    ${passStatus}
+                    <button onclick="location.reload()">Neues Quiz starten</button>
+                `;
+            }
+        } else {
+            // Optional: Alert user to select an answer
+            alert("Bitte wählen Sie eine Antwort aus.");
+        }
+    });
+</script>
+</body>
+</html>
