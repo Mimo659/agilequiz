@@ -119,6 +119,29 @@
             font-size: 1.2rem;
         }
 
+        .incorrect-answers h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .incorrect-answers ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .incorrect-answers li {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .incorrect-answers li strong {
+            color: #555;
+        }
+
     </style>
 </head>
 <body>
@@ -248,6 +271,7 @@
 
     let currentQuiz = 0;
     let score = 0;
+    let incorrectAnswers = []; // Array to store incorrect answers
 
     // loadQuiz(); // Don't load quiz immediately, wait for button click
 
@@ -290,8 +314,15 @@
         const answer = getSelected();
 
         if (answer) {
-            if (answer === shuffledQuizData[currentQuiz].correct) {
+            const currentQuizData = shuffledQuizData[currentQuiz];
+            if (answer === currentQuizData.correct) {
                 score++;
+            } else {
+                incorrectAnswers.push({
+                    question: currentQuizData.question,
+                    selectedAnswer: currentQuizData[answer],
+                    correctAnswer: currentQuizData[currentQuizData.correct]
+                });
             }
 
             currentQuiz++;
@@ -323,6 +354,20 @@
                         <p>${resultMessage}</p>
                         ${passStatus}
                     </div>
+                    ${incorrectAnswers.length > 0 ? `
+                        <div class="incorrect-answers" style="padding: 2rem; text-align: left;">
+                            <h3>Falsch beantwortete Fragen:</h3>
+                            <ul>
+                                ${incorrectAnswers.map(item => `
+                                    <li>
+                                        <strong>Frage:</strong> ${item.question}<br>
+                                        <strong>Deine Antwort:</strong> ${item.selectedAnswer}<br>
+                                        <strong>Richtige Antwort:</strong> ${item.correctAnswer}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
                     <button onclick="location.reload()">Neues Quiz starten</button>
                 `;
             }
